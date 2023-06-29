@@ -1,0 +1,10 @@
+task-name: 'Example quest'
+description:
+- 'I am a quest'
+database-name: 'example_quest'
+icon: CAKE
+show-progress: false
+max-progress: 1
+
+listener-type: KILL_MOBS
+target: CHICKEN

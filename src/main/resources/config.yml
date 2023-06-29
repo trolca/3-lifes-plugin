@@ -1,0 +1,15 @@
+host: 'localhost'
+port: '' #leave empty to use the default (1433)
+user: 'root'
+password: ''
+
+#if for some reason you want to have specific names for databases write them here
+#ADVANCED SETTINGS DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU ARE DOING
+#(if empty they are gonna be replaced by deafault names)
+lifes-database-name: 'lifes_data'
+daily-quests-database-name: 'tasks_daily'
+weekly-quests-database-name: 'tasks_weekly'
+quests-awards-database-name: 'tasks_awards_data'
+
+daily-quests-num: 6
+weekly-quests-num: 10

@@ -1,0 +1,74 @@
+daily-quests-progress: "Postęp w questach dziennych"
+weekly-quests-progress: "Postęp w questach tygodniowych"
+take-life-shard-name: "Naciśnij mnie żeby dostac life shard!"
+take-revive-shard-name: "Naciśnij mnie żeby dostac revive shard!"
+taken-life-shard-name: "Heart shard już zostało odebrane przez ciebie!"
+taken-revive-shard-name: "Revive shard już zostało odebrane przez ciebie!"
+main-life-menu-name: "Główne 3 lifes menu"
+daily-quests-page-name: "Dniowe questy"
+weekly-quests-page-name: "Tygodniowe questy"
+stats-menu-name: "Statystyki <player>"
+back-item-name: "Powróć"
+language-item-name: "Język: <language>"
+exit-item-name: "Wyjdź"
+player-stats-name: "Zobacz swoje statystyki"
+daily-quests-page-item-name: "Questy dzienne"
+daily-quests-page-item-lore: "Wykonaj wszystkie te quest by dostać life shard!"
+weekly-quests-page-item-name: "Questy tygodniowe"
+weekly-quests-page-item-lore: "Wykonaj wszystkie te quest by dostać revive shard!"
+not-silk-touch: "(Nie liczy bloków wykopanych używając silk touch)"
+time-quests-general: "Pozostały czas: <time>"
+progress-quests-general: "Postęp: <progress>"
+not-completed-quest: "Nie skończone!"
+completed-progress-general: "Zakończone!"
+player-stats-item-name: "Statyski gracza <player>"
+
+killed-players-stat-name: "Zabitych graczy: <num>"
+lifes-crafted-stat-name: "Skraftowane życia: <num>"
+revives-crafted-stat-name: "Skraftowane revive: <num>"
+been-revived-stat-name: "Ilość bycia wskrzeszonym: <num>"
+revived-someone-stat-name: "Ilość wskrzeszania innych graczy: <num>"
+all-quests-stat-name: "Wszystkie skończone questy: <num>"
+daily-quests-stat-name: "Wszystkie dzienne skończone questy: <num>"
+weekly-quests-stat-name: "Wszystkie tygodniowe skonczone questy: <num>"
+
+killed-players-stat-lore:
+- "Ile razem zabiłeś osób"
+- "na serwerze"
+lifes-crafted-stat-lore:
+- "Ile żyć skraftowałeś w całości"
+- "używajać stołu rzemieślniczego"
+revives-crafted-stat-lore:
+- "Ile revive cards skraftowałeś w całości"
+- "używajać stołu rzemieślniczego"
+been-revived-stat-lore: 
+- "Ile razy zostałeś wskrzeszony przez innego gracza"
+revived-someone-stat-lore:
+- "Ile razy ty kogoś wskrzesiłeś"
+- "używając revive card"
+all-quests-stat-lore:
+- "Ilość wszystkich questów skończonych"
+daily-quests-stat-lore:
+- "Ile dniowych questów skończyłes"
+- "w całości"
+weekly-quests-stat-lore:
+- "Ile tygodniowych questów skończyłes"
+- "w całości"
+
+daily-quest-page-completed:
+- "Właśnie skończyłeś wszystkie questy dzienne!"
+- "Idz do głónego menu i naciśnij w daily shard żeby zdobyć nagrode!"
+weekly-quest-page-completed:
+- "Właśnie skończyłeś wszystkie questy tygodniowe!"
+- "Idz do głónego menu i naciśnij w revive shard żeby zdobyć nagrode!"
+
+takelife-command-error: "Masz tylko 1 życie! Prosze nie zabijaj sie :<"
+addlife-command-error: "Nie możesz mieć więcej niż 3 życia!"
+addlife-success: "Pomyślnie dodano życie!"
+revive-card-error: "Nikt jeszcze nie żyje!"
+revive-someone-message: "<player> WŁAŚNIE ZOSTAŁ WSKRZESZONY!"
+revive-someone-not-online-extra-message: "(Gracz bedzię naprawde wskrzeszony kiedy dołączy na serwer)"
+revived-player-join: "Zostałeś wskrzeszony kiedy byłeś offline"
+lifes-craft-stack-error: "Musisz mieć więcej miejsca w ekwipunku żeby skrawtować te życia!"
+craft-with-custom-items-error: "Nie możesz skraftować innych rzeczy tymi itemami!"
+quest-complete-text: "Właśnie ukończyłeś quest <quest>"

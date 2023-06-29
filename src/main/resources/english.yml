@@ -1,0 +1,74 @@
+daily-quests-progress: "Daily quests progress"
+weekly-quests-progress: "Weekly quests progress"
+take-life-shard-name: "Click me to get the life shard!"
+take-revive-shard-name: "Click me to get the revive shard!"
+taken-life-shard-name: "The heart shard has been already taken"
+taken-revive-shard-name: "The revive shard has been already taken!"
+main-life-menu-name: "Main 3 lifes menu"
+daily-quests-page-name: "Daily quests"
+weekly-quests-page-name: "Weekly quests"
+stats-menu-name: "<player>'s stats"
+back-item-name: "Back"
+language-item-name: "Language: <language>"
+exit-item-name: "Exit"
+player-stats-name: "Get your stats"
+daily-quests-page-item-name: "Daily quests"
+daily-quests-page-item-lore: "Complete these quests to get a life shard!"
+weekly-quests-page-item-name: "Weekly quests"
+weekly-quests-page-item-lore: "Complete these quests to get a revive shard!"
+not-silk-touch: "(Doesn't count blocks broken with silk touch)"
+time-quests-general: "Time left: <time>"
+progress-quests-general: "Progress: <progress>"
+not-completed-quest: "Not completed!"
+completed-progress-general: "Completed!"
+player-stats-item-name: "<player>'s 3 life plugin stats"
+
+killed-players-stat-name: "Killed players: <num>"
+lifes-crafted-stat-name: "Lifes crafted: <num>"
+revives-crafted-stat-name: "Lifes crafted: <num>"
+been-revived-stat-name: "Times been revived: <num>"
+revived-someone-stat-name: "Times revived someone: <num>"
+all-quests-stat-name: "All completed quests: <num>"
+daily-quests-stat-name: "Daily completed quests: <num>"
+weekly-quests-stat-name: "Weekly completed quests: <num>"
+
+killed-players-stat-lore:
+- "How many players you've killed"
+- "on the entire server"
+lifes-crafted-stat-lore:
+- "How many lifes you've crafted"
+- "using the crafting bench"
+revives-crafted-stat-lore:
+- "How many revive cards you've"
+- "crafted using the crafting bench"
+been-revived-stat-lore: 
+- "How many times has someone revived you"
+revived-someone-stat-lore:
+- "How many times you've revived"
+- "someone using the revive card"
+all-quests-stat-lore:
+- "All the quests you've completed in total"
+daily-quests-stat-lore:
+- "How many daily quests"
+- "you've completed in total"
+weekly-quests-stat-lore:
+- "How many weekly quests"
+- "you've completed in total"
+
+daily-quest-page-completed:
+- "You've just completed all of the daily quests!"
+- "Go to the main menu and click the life shard to get the award"
+weekly-quest-page-completed:
+- "You've just completed all of the weekly quests!"
+- "Go to the main menu and click the revive shard to get the award"
+
+takelife-command-error: "You only have 1 life! Pls dont kill urself :<"
+addlife-command-error: "You cannot have more than 3 lifes!"
+addlife-success: "Successfully added a life!"
+revive-card-error: "No one is dead!"
+revive-someone-message: "<player> HAS JUST BEEN REVIVED!"
+revive-someone-not-online-extra-message: "(The player will be properly revived when he joins the server)"
+revived-player-join: "You have been revived"
+lifes-craft-stack-error: "You have to have more empty space in your inventory to craft these lifes!"
+craft-with-custom-items-error: "You cannot craft other things with custom items!"
+quest-complete-text: "You've just completed the quest <quest>"

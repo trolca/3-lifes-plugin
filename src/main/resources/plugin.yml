@@ -1,0 +1,18 @@
+name: LifesPluginS2
+version: '${project.version}'
+main: me.trololo11.lifesplugin.LifesPlugin
+api-version: '1.20'
+authors: [ trololo11 ]
+description: A seson 2 of the lifes plugin it comes with lots of new stuff
+commands:
+  lifesmenu:
+    description: Opens the main lifes menu
+  takelife:
+    description: Use this to take a life from yourself and get it as an item!
+  getitems:
+    description: Ohhh yeahh
+  setlifes:
+    description: This command sets lifes for a specific player
+permissions:
+  lifesplugins2.admin:
+    description: An admin permission for the more sussy commands :>

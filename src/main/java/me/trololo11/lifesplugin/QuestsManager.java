@@ -384,7 +384,7 @@ public class QuestsManager {
             case KILL_MOBS,RIDE_DISTANCE,TAME_ANIMAL, BREED_ENTITY, RIGHT_CLICK_ENTITY, PUNCH_ENTITY -> {
                 return EntityType.valueOf(targetType);
             }
-            case BREAK_BLOCKS, CRAFT, EAT, GET_ITEM, PLACE_BLOCKS, BREAK_ITEM, BREAK_BLOCKS_NO_SILK, SMITHING_USE, USE_ITEM, SMELT_ITEM   -> {
+            case BREAK_BLOCKS, CRAFT, EAT, GET_ITEM, PLACE_BLOCKS, BREAK_ITEM, BREAK_BLOCKS_NO_SILK, SMITHING_USE, USE_ITEM, SMELT_ITEM, VILLAGER_TRADE_SPEND   -> {
                 return Material.valueOf(targetType);
             }
             case PLAYER_HEART -> {

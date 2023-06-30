@@ -42,4 +42,7 @@ MINECART_RIDE - To progress player has to ride in a minecart (There should be no
 VILLAGER_CURE - To progress player has to cure zombie villagers into villagers (There should be no target :D)
 PUNCH_ENTITY - To progress player has to punch a specified entity (Target should be EntityType)
 USE_ITEM - To progress player has to right click an item (aka use it) (Target should be Material)
-SMELT_ITEM - To pregress player has to smelt the specified item in a furnace (Target should be Material)
+SMELT_ITEM - To progress player has to smelt the specified item in a furnace (Target should be Material)
+TOTEM_USE - To progress player has to use a totem of undying (There shoudn't be a target :>)
+VILLAGER_TRADE_SPEND - To progress player has to spend a specified item while trading with a villager (Target should be Material)
+ON_FIRE - To progress player has to be on fire (There shouldn't be a target :>)

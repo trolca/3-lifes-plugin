@@ -39,8 +39,10 @@ public class CraftItemListener extends QuestListener {
             int maxCraftable = getMaxCraftAmount(e.getInventory());
             int capacity = fits(test, e.getView().getBottomInventory());
 
+            if(recipeAmount == 0) maxCraftable = 1;
 
-            if (capacity < maxCraftable)
+            if (capacity < maxCraftable && recipeAmount != 0)
+
                 maxCraftable = ((capacity + recipeAmount - 1) / recipeAmount) * recipeAmount;
 
             recipeAmount = maxCraftable;

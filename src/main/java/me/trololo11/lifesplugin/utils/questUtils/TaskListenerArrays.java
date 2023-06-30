@@ -32,6 +32,9 @@ public class TaskListenerArrays {
     private final ArrayList<QuestClass> punchEntityQuests;
     private final ArrayList<QuestClass> useItemQuests;
     private final ArrayList<QuestClass> smeltItemQuests;
+    private final ArrayList<QuestClass> totemUseQuests;
+    private final ArrayList<QuestClass> villagerTradeQuests;
+    private final ArrayList<QuestClass> onFireQuests;
 
 
     public TaskListenerArrays(ArrayList<QuestClass> allQuests) {
@@ -63,6 +66,9 @@ public class TaskListenerArrays {
         punchEntityQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.PUNCH_ENTITY).toList());
         useItemQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.USE_ITEM).toList());
         smeltItemQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.SMELT_ITEM).toList());
+        totemUseQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.TOTEM_USE).toList());
+        villagerTradeQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.VILLAGER_TRADE_SPEND).toList());
+        onFireQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.ON_FIRE).toList());
 
 
     }
@@ -169,6 +175,18 @@ public class TaskListenerArrays {
 
     public ArrayList<QuestClass> getSmeltItemQuests() {
         return smeltItemQuests;
+    }
+
+    public ArrayList<QuestClass> getTotemUseQuests() {
+        return totemUseQuests;
+    }
+
+    public ArrayList<QuestClass> getVillagerTradeQuests() {
+        return villagerTradeQuests;
+    }
+
+    public ArrayList<QuestClass> getOnFireQuests() {
+        return onFireQuests;
     }
 
 

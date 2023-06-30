@@ -28,6 +28,9 @@ public enum TaskListenerType {
     VILLAGER_CURE,
     PUNCH_ENTITY,
     USE_ITEM,
-    SMELT_ITEM
+    SMELT_ITEM,
+    TOTEM_USE,
+    VILLAGER_TRADE_SPEND,
+    ON_FIRE
 
 }

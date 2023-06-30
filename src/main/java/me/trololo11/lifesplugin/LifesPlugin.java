@@ -13,6 +13,7 @@ import me.trololo11.lifesplugin.listeners.lifeslisteners.*;
 import me.trololo11.lifesplugin.listeners.questListeners.*;
 import me.trololo11.lifesplugin.tabcompleters.MenuCommandTabCompleter;
 import me.trololo11.lifesplugin.tabcompleters.SetLifesTabCompleter;
+import me.trololo11.lifesplugin.tasks.SaveDataToDatabaseTask;
 import me.trololo11.lifesplugin.utils.Menu;
 import me.trololo11.lifesplugin.utils.Menus;
 import me.trololo11.lifesplugin.utils.PlayerStats;
@@ -23,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitWorker;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -142,6 +142,8 @@ public final class LifesPlugin extends JavaPlugin {
         TeamsManager teamsManager = new TeamsManager();
         teamsManager.registerEverything();
 
+        new SaveDataToDatabaseTask(questsManager).runTaskTimer(this, 24000L, 24000L);
+
         getCommand("lifesmenu").setExecutor(new MainMenuCommand());
         getCommand("takelife").setExecutor(new TakeLifeCommand(recipesManager));
         getCommand("getitems").setExecutor(new GetItemsCommand(recipesManager));
@@ -186,6 +188,9 @@ public final class LifesPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PunchEntityListener(), this);
         getServer().getPluginManager().registerEvents(new UseItemListener(), this);
         getServer().getPluginManager().registerEvents(new SmeltItemListener(), this);
+        getServer().getPluginManager().registerEvents(new TotemUseListener(), this);
+        getServer().getPluginManager().registerEvents(new VillagerTradeListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerOnFireListener(), this);
     }
 
     @Override

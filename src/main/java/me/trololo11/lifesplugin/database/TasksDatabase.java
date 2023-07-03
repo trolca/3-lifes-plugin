@@ -3,6 +3,7 @@ package me.trololo11.lifesplugin.database;
 import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.utils.questTypes.QuestType;
 
+import javax.naming.CommunicationException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -29,12 +30,18 @@ public class TasksDatabase {
         if(databaseName == null || databaseName.isEmpty()){
             databaseName = "tasks_weekly";
         }
+        try {
+            Class.forName( "com.mysql.jdbc.Driver" );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
 
         Connection databaseCheck = DriverManager.getConnection(url, user,  password);
 
 
         Statement databaseStatement = databaseCheck.createStatement();
+        System.out.println("sususus");
         databaseStatement.execute("CREATE DATABASE IF NOT EXISTS "+databaseName);
         databaseStatement.close();
 
@@ -57,6 +64,11 @@ public class TasksDatabase {
         if(databaseName == null || databaseName.isBlank()){
             databaseName = "tasks_daily";
         }
+        try {
+            Class.forName( "com.mysql.jdbc.Driver" );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         Connection databaseCheck = DriverManager.getConnection(url, user, password);
 
@@ -71,6 +83,12 @@ public class TasksDatabase {
         return dailyConnection;
     }
 
+    public void initializeDatabase() throws SQLException, ClassNotFoundException {
+        getAwardsDataConnection();
+        getDailyConnection();
+        getWeeklyConnection();
+    }
+
     public Connection getAwardsDataConnection() throws SQLException {
         if (awardsConnection != null) return awardsConnection;
 
@@ -82,6 +100,12 @@ public class TasksDatabase {
         String databaseName = plugin.getConfig().getString("quests-awards-database-name");
         if(databaseName == null || databaseName.isBlank()){
             databaseName = "tasks_awards_data";
+        }
+
+        try {
+            Class.forName( "com.mysql.jdbc.Driver" );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         Connection databaseCheck = DriverManager.getConnection(url, user, password);
@@ -110,7 +134,7 @@ public class TasksDatabase {
         statement.close();
     }
 
-    //we can remove the table if the task is no longer used or we feel like it (pls dont do the second reason thank you :D)
+    //we can remove the table if the task is no longer used
     public void removeTaskTable(String name, String taskType) throws SQLException {
         Statement statement = taskType.equalsIgnoreCase("daily") ? getDailyConnection().createStatement() : getWeeklyConnection().createStatement();
         statement.execute("DROP TABLE " + name);
@@ -129,6 +153,7 @@ public class TasksDatabase {
         if (results.next()) {
             return results.getInt("progress");
         }
+        //TODO Check if this causes the problem with task progress :>
         String sql = "INSERT INTO " + taskName + "(uuid, progress) VALUES (?, ?)";
 
         PreparedStatement createStatement = questType == QuestType.DAILY ? getDailyConnection().prepareStatement(sql) : getWeeklyConnection().prepareStatement(sql);

@@ -31,6 +31,9 @@ public enum TaskListenerType {
     SMELT_ITEM,
     TOTEM_USE,
     VILLAGER_TRADE_SPEND,
-    ON_FIRE
+    ON_FIRE,
+    VILLAGER_TRADE_BUY,
+    VILLAGER_TRADE_BUY_ENCHANTS,
+    GET_ITEM_BY_MOB
 
 }

@@ -46,3 +46,5 @@ SMELT_ITEM - To progress player has to smelt the specified item in a furnace (Ta
 TOTEM_USE - To progress player has to use a totem of undying (There shoudn't be a target :>)
 VILLAGER_TRADE_SPEND - To progress player has to spend a specified item while trading with a villager (Target should be Material)
 ON_FIRE - To progress player has to be on fire (There shouldn't be a target :>)
+VILLAGER_TRADE_BUY - To progress player has to buy a specific item from a villager (Target should be Material)
+GET_ITEM_BY_MOB - To progress a mob that player kills has to drop the specified item (Target should be Material)

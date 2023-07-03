@@ -83,10 +83,17 @@ public final class LifesPlugin extends JavaPlugin {
 
         try {
             lifesDatabase.initalizeDatabase();
-        } catch (SQLException e) {
-            System.out.println("[LifesPluginS2] Couldn't connect to the database!");
-            System.out.println("[LifesPluginS2] Check the config file and see if all of the database informations are correct!");
-            return;
+            tasksDatabase.initializeDatabase();
+        } catch (SQLException | ClassNotFoundException e ) {
+            try {
+                lifesDatabase.initalizeDatabase();
+                tasksDatabase.initializeDatabase();
+            } catch (SQLException | ClassNotFoundException ex) {
+                e.printStackTrace();
+                System.out.println("[LifesPluginS2] Couldn't connect to the database!");
+                System.out.println("[LifesPluginS2] Check the config file and see if all of the database informations are correct!");
+                return;
+            }
         }
 
         setupData();
@@ -189,8 +196,10 @@ public final class LifesPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new UseItemListener(), this);
         getServer().getPluginManager().registerEvents(new SmeltItemListener(), this);
         getServer().getPluginManager().registerEvents(new TotemUseListener(), this);
-        getServer().getPluginManager().registerEvents(new VillagerTradeListener(), this);
+        getServer().getPluginManager().registerEvents(new VillagerPayTradeListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerOnFireListener(), this);
+        getServer().getPluginManager().registerEvents(new VillagerBuyTradeListener(), this);
+        getServer().getPluginManager().registerEvents(new MobDropsListener(), this);
     }
 
     @Override
@@ -310,6 +319,7 @@ public final class LifesPlugin extends JavaPlugin {
         for (Player p : Bukkit.getOnlinePlayers()) {
 
             for (QuestClass quest : questsManager.getAllActiveQuests()) {
+
                 quest.setPluginSideProgress(p, tasksDatabase.getTasksProgress(p.getUniqueId().toString(), quest.getTableName(), quest.getQuestType()));
             }
 

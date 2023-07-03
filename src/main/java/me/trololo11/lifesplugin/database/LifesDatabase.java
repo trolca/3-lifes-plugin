@@ -29,6 +29,12 @@ public class LifesDatabase {
             databaseName = "lifes_data";
         }
 
+        try {
+            Class.forName( "com.mysql.jdbc.Driver" );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
 
         Connection databaseCheck = DriverManager.getConnection(url, user, password);
 
@@ -45,7 +51,8 @@ public class LifesDatabase {
 
     }
 
-    public void initalizeDatabase() throws SQLException { //setups the connection for the database if the database not exists then it creates it
+    public void initalizeDatabase() throws SQLException, ClassNotFoundException { //setups the connection for the database if the database not exists then it creates it
+        Class.forName( "com.mysql.jdbc.Driver" );
         Statement statement = getConnection().createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS players_lifes(uuid varchar(36) primary key, lifes int, isRevived boolean)");
         statement.close();

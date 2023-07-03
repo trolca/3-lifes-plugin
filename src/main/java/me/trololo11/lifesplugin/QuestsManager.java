@@ -366,7 +366,9 @@ public class QuestsManager {
             System.out.println("[LifesPluginS2] Error while reading the listener type for quest: "+ databaseName);
             System.out.println("[LifesPluginS2] Check the file for possible errors");
         }
-        Object target = getTargetType(fileConfig.getString("target"), listenerType, fileConfig);
+
+        String stringTarget = fileConfig.getString("target");
+        Object target = getTargetType(stringTarget == null ? null : stringTarget.toUpperCase(), listenerType, fileConfig);
 
 
 
@@ -384,7 +386,7 @@ public class QuestsManager {
             case KILL_MOBS,RIDE_DISTANCE,TAME_ANIMAL, BREED_ENTITY, RIGHT_CLICK_ENTITY, PUNCH_ENTITY -> {
                 return EntityType.valueOf(targetType);
             }
-            case BREAK_BLOCKS, CRAFT, EAT, GET_ITEM, PLACE_BLOCKS, BREAK_ITEM, BREAK_BLOCKS_NO_SILK, SMITHING_USE, USE_ITEM, SMELT_ITEM, VILLAGER_TRADE_SPEND   -> {
+            case BREAK_BLOCKS, CRAFT, EAT, GET_ITEM, PLACE_BLOCKS, BREAK_ITEM, BREAK_BLOCKS_NO_SILK, SMITHING_USE, USE_ITEM, SMELT_ITEM, VILLAGER_TRADE_SPEND, VILLAGER_TRADE_BUY, GET_ITEM_BY_MOB   -> {
                 return Material.valueOf(targetType);
             }
             case PLAYER_HEART -> {

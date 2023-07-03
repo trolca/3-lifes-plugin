@@ -47,4 +47,15 @@ public abstract class QuestListener implements Listener {
         }
     }
 
+    protected void checkTarget(Object target, OfflinePlayer p, ArrayList<QuestClass> customList, int customAddProgress) throws SQLException {
+        for (QuestClass quest : customList) {
+
+            if ((quest.getQuestTarget() == target || quest.getQuestTarget() == null) && !quest.hasCompleted(p) && !plugin.getDeadPlayers().contains(p)) {
+
+                quest.setProgress(p, quest.getProgress(p) + customAddProgress);
+
+            }
+        }
+    }
+
 }

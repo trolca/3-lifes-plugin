@@ -4,6 +4,7 @@ import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.utils.QuestListener;
 import me.trololo11.lifesplugin.utils.questUtils.QuestClass;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
@@ -16,7 +17,7 @@ import org.bukkit.inventory.MerchantRecipe;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class VillagerTradeListener extends QuestListener {
+public class VillagerPayTradeListener extends QuestListener {
 
     private LifesPlugin plugin = LifesPlugin.getPlugin();
     @EventHandler
@@ -24,6 +25,7 @@ public class VillagerTradeListener extends QuestListener {
         if(!(e.getWhoClicked() instanceof Player)) return;
         Player player = (Player) e.getWhoClicked();
         if(e.getClickedInventory() == null) return;
+        if(e.getSlot() != 2) return;
         if(e.getClickedInventory().getType() != InventoryType.MERCHANT) return;
         MerchantInventory merchantInventory = (MerchantInventory) e.getClickedInventory();
         if(merchantInventory.getSelectedRecipe() == null) return;
@@ -32,11 +34,10 @@ public class VillagerTradeListener extends QuestListener {
         ItemStack item = merchantInventory.getSelectedRecipe().getAdjustedIngredient1();
         ItemStack itemSus = merchantInventory.getItem(0);
         if(itemSus == null) return;
-        if(item.getType() != Material.EMERALD)  return;
 
         if(e.getClick() != ClickType.SHIFT_LEFT && e.getClick() != ClickType.SHIFT_RIGHT){
 
-            checkTarget(null, player, item.getAmount());
+            checkTarget(item.getType(), player, item.getAmount());
 
         }else{
             int maxUsages = merchantRecipe.getMaxUses();
@@ -49,6 +50,7 @@ public class VillagerTradeListener extends QuestListener {
 
         }
     }
+
 
     @Override
     public ArrayList<QuestClass> getListenerArray() {

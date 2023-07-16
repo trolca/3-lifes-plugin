@@ -28,8 +28,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class LifesPlugin extends JavaPlugin {
 
@@ -38,6 +42,10 @@ public final class LifesPlugin extends JavaPlugin {
 
     private HashMap<Player, PlayerStats> playerStats = new HashMap<>();
     private HashMap<Player, Language> playerLanguages = new HashMap<>();
+
+    public Logger logger;
+
+    private Properties globalDbProperties;
 
     private int dailyQuestNum,weeklyQuestNum;
 
@@ -64,7 +72,7 @@ public final class LifesPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
+        logger = Bukkit.getLogger();
         lifesDatabase = new LifesDatabase();
         tasksDatabase = new TasksDatabase();
         questsTimings = new QuestsTimings();
@@ -75,6 +83,12 @@ public final class LifesPlugin extends JavaPlugin {
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+
+        globalDbProperties = new Properties();
+        globalDbProperties.setProperty("minimumIdle", "1");
+        globalDbProperties.setProperty("maximumPoolSize", "4");
+        globalDbProperties.setProperty("initializationFailTimeout", "20000");
+
 
         recipesManager.initililazeRecipes();
 
@@ -90,8 +104,9 @@ public final class LifesPlugin extends JavaPlugin {
                 tasksDatabase.initializeDatabase();
             } catch (SQLException | ClassNotFoundException ex) {
                 e.printStackTrace();
-                System.out.println("[LifesPluginS2] Couldn't connect to the database!");
-                System.out.println("[LifesPluginS2] Check the config file and see if all of the database informations are correct!");
+
+                logger.info("[LifesPluginS2] Couldn't connect to the database!");
+                logger.info("[LifesPluginS2] Check the config file and see if all of the database informations are correct!");
                 return;
             }
         }
@@ -108,13 +123,13 @@ public final class LifesPlugin extends JavaPlugin {
         if(file.listFiles().length < weeklyQuestNum) weeklyQuestNum = file.listFiles().length;
 
         if(dailyQuestNum == 0){
-            System.out.println("[LifesPluginSeason2] Please create at least one daily quest to start this plugin!");
-            System.out.println("[LifesPluginSeason2] You can find more info in file questHelp.txt");
+            logger.info("[LifesPluginSeason2] Please create at least one daily quest to start this plugin!");
+            logger.info("[LifesPluginSeason2] You can find more info in file questHelp.txt");
             return;
         }
         if(weeklyQuestNum == 0){
-            System.out.println("[LifesPluginSeason2] Please create at least one weekly quest to start this plugin!");
-            System.out.println("[LifesPluginSeason2] You can find more info in file questHelp.txt");
+            logger.info("[LifesPluginSeason2] Please create at least one weekly quest to start this plugin!");
+            logger.info("[LifesPluginSeason2] You can find more info in file questHelp.txt");
             return;
         }
 
@@ -200,6 +215,7 @@ public final class LifesPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerOnFireListener(), this);
         getServer().getPluginManager().registerEvents(new VillagerBuyTradeListener(), this);
         getServer().getPluginManager().registerEvents(new MobDropsListener(), this);
+
     }
 
     @Override
@@ -215,6 +231,9 @@ public final class LifesPlugin extends JavaPlugin {
                 quest.removePluginSideProgress(p);
             }
         }
+
+        lifesDatabase.closeDatabase();
+        tasksDatabase.closeDatabase();
 
     }
 
@@ -403,6 +422,10 @@ public final class LifesPlugin extends JavaPlugin {
 
     public int getWeeklyQuestNum() {
         return weeklyQuestNum;
+    }
+
+    public Properties getGlobalDbProperties() {
+        return globalDbProperties;
     }
 
     public PlayerStats getPlayerStats(Player player){

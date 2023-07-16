@@ -36,8 +36,8 @@ public class TaskListenerArrays {
     private final ArrayList<QuestClass> villagerTradeQuests;
     private final ArrayList<QuestClass> onFireQuests;
     private final ArrayList<QuestClass> villagerBuyQuests;
-    private final ArrayList<QuestClass> villagerBuyEnchantsQuests;
     private final ArrayList<QuestClass> itemFromMobQuests;
+    private final ArrayList<QuestClass> playerDamageQuests;
 
 
     public TaskListenerArrays(ArrayList<QuestClass> allQuests) {
@@ -73,8 +73,8 @@ public class TaskListenerArrays {
         villagerTradeQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.VILLAGER_TRADE_SPEND).toList());
         onFireQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.ON_FIRE).toList());
         villagerBuyQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.VILLAGER_TRADE_BUY).toList());
-        villagerBuyEnchantsQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.VILLAGER_TRADE_BUY_ENCHANTS).toList());
         itemFromMobQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.GET_ITEM_BY_MOB).toList());
+        playerDamageQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.PLAYER_DAMAGE).toList());
 
     }
 
@@ -197,12 +197,12 @@ public class TaskListenerArrays {
         return villagerBuyQuests;
     }
 
-    public ArrayList<QuestClass> getVillagerBuyEnchantsQuests() {
-        return villagerBuyEnchantsQuests;
-    }
-
     public ArrayList<QuestClass> getItemFromMobQuests() {
         return itemFromMobQuests;
+    }
+
+    public ArrayList<QuestClass> getPlayerDamageQuests() {
+        return playerDamageQuests;
     }
 
 

@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class QuestsManager {
 
@@ -38,6 +40,7 @@ public class QuestsManager {
     private HashMap<Player, Boolean> hasTakenDaily = new HashMap<>();
     private HashMap<Player, Boolean> hasTakenWeekly = new HashMap<>();
     private boolean isDailyTaskRunning=false,isWeeklyTaskRunning=false;
+    private Logger logger;
 
     private ArrayList<QuestClass> dailyQuests = new ArrayList<>();
     private ArrayList<QuestClass> weeklyQuests = new ArrayList<>();
@@ -66,6 +69,7 @@ public class QuestsManager {
 
     public QuestsManager(QuestsTimings questsTimings){
         this.questsTimings = questsTimings;
+        logger = plugin.logger;
     }
 
     //counts all of the players quests that they finished
@@ -351,8 +355,8 @@ public class QuestsManager {
         try {
             icon = Material.valueOf(fileConfig.getString("icon").toUpperCase());
         }catch (IllegalArgumentException e){
-            System.out.println("[LifesPluginS2] Error while trying to read the icon for quest "+ databaseName);
-            System.out.println("[LifesPluginS2] More information: ");
+            logger.info("[LifesPluginS2] Error while trying to read the icon for quest "+ databaseName);
+            logger.info("[LifesPluginS2] More information: ");
             e.printStackTrace();
         }
 
@@ -399,9 +403,16 @@ public class QuestsManager {
                 return fileConfig.getInt("target");
             }
 
+            case PLAYER_DAMAGE -> {
+                return EntityDamageEvent.DamageCause.valueOf(targetType);
+            }
+
+            default -> {
+                return null;
+            }
+
         }
 
-        return targetType;
 
     }
 

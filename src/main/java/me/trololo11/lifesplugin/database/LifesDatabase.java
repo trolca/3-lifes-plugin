@@ -1,5 +1,7 @@
 package me.trololo11.lifesplugin.database;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import me.trololo11.lifesplugin.Language;
 import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.utils.PlayerStats;
@@ -14,10 +16,10 @@ public class LifesDatabase {
 
 
     private LifesPlugin plugin = LifesPlugin.getPlugin();
-    private Connection connection;
+    private HikariDataSource ds;
 
     public Connection getConnection() throws SQLException {
-        if (connection != null) return connection;
+        if (ds != null) return ds.getConnection();
 
         String host = plugin.getConfig().getString("host");
         String port = plugin.getConfig().getString("port");
@@ -29,13 +31,6 @@ public class LifesDatabase {
             databaseName = "lifes_data";
         }
 
-        try {
-            Class.forName( "com.mysql.jdbc.Driver" );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
         Connection databaseCheck = DriverManager.getConnection(url, user, password);
 
 
@@ -44,30 +39,46 @@ public class LifesDatabase {
         databaseStatement.close();
 
         databaseCheck.close();
+        HikariConfig config = new HikariConfig();
 
-        connection = DriverManager.getConnection(url + "/"+databaseName, user, password);
+        config.setJdbcUrl(url + "/" + databaseName);
+        config.setUsername(user);
+        config.setPassword(password);
+        config.setDataSourceProperties(plugin.getGlobalDbProperties());
+        ds = new HikariDataSource(config);
 
-        return connection;
+
+
+
+        return ds.getConnection();
 
     }
 
+    /**
+     * Closes all of the DataSources in the database
+     */
+    public void closeDatabase(){
+        ds.close();
+    }
+
     public void initalizeDatabase() throws SQLException, ClassNotFoundException { //setups the connection for the database if the database not exists then it creates it
-        Class.forName( "com.mysql.jdbc.Driver" );
-        Statement statement = getConnection().createStatement();
+        Connection connection = getConnection();
+        Statement statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS players_lifes(uuid varchar(36) primary key, lifes int, isRevived boolean)");
         statement.close();
         statement = getConnection().createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS player_stats(uuid varchar(36) primary key, kills int, lifesCrafted int, " +
                 "revivesCrafted int, beenRevived int, revivedSomeone int, allQuestCompleted int, dailyQuestCompleted int, weeklyQuestCompleted int)");
         statement.close();
-        statement = getConnection().createStatement();
+        statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS player_language(uuid varchar(36) primary key, lang_name varchar(25))");
         statement.close();
+        connection.close();
     }
 
     public void addPlayerToDatabase(String uuid, int lifes, boolean isRevived) throws SQLException {
-
-        PreparedStatement statement = getConnection().prepareStatement("INSERT INTO players_lifes(uuid, lifes, isRevived) VALUES (?, ?, ?)");
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO players_lifes(uuid, lifes, isRevived) VALUES (?, ?, ?)");
 
         statement.setString(1, uuid);
         statement.setInt(2, lifes);
@@ -76,14 +87,15 @@ public class LifesDatabase {
         statement.executeUpdate();
 
         statement.close();
+        connection.close();
 
     }
 
     public ArrayList<OfflinePlayer> getAllDeadPlayers() throws SQLException {
         //We dont really have a proper attribiute for every dead person and it would be kinda useless so we get all the players which have 0 lifes lol
         ArrayList<OfflinePlayer> deadPlayers = new ArrayList<>();
-
-        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM players_lifes WHERE lifes = 0");
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM players_lifes WHERE lifes = 0");
 
         ResultSet results = statement.executeQuery();
 
@@ -93,6 +105,7 @@ public class LifesDatabase {
         }
 
         statement.close();
+        connection.close();
 
         return deadPlayers;
 
@@ -102,8 +115,8 @@ public class LifesDatabase {
         String sql = "INSERT INTO player_stats(uuid, kills, lifesCrafted, " +
                 "revivesCrafted, beenRevived, revivedSomeone, allQuestCompleted, dailyQuestCompleted, weeklyQuestCompleted) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        PreparedStatement statement = getConnection().prepareStatement(sql);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1,playerStats.getPlayer().getUniqueId().toString());
         statement.setInt(2, playerStats.getKills());
@@ -117,6 +130,7 @@ public class LifesDatabase {
 
         statement.executeUpdate();
         statement.close();
+        connection.close();
 
     }
 
@@ -124,8 +138,8 @@ public class LifesDatabase {
         String sql = "UPDATE player_stats SET kills = ?, lifesCrafted = ?, " +
                 "revivesCrafted = ?, beenRevived = ?, revivedSomeone = ?, allQuestCompleted = ?, dailyQuestCompleted = ?, weeklyQuestCompleted = ? " +
                 "WHERE uuid = ?";
-
-        PreparedStatement statement = getConnection().prepareStatement(sql);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
 
         statement.setInt(1, playerStats.getKills());
@@ -140,6 +154,7 @@ public class LifesDatabase {
 
         statement.executeUpdate();
         statement.close();
+        connection.close();
 
     }
 
@@ -149,7 +164,8 @@ public class LifesDatabase {
 
     public PlayerStats getPlayerStats(String uuid) throws SQLException {
         String sql = "SELECT * FROM player_stats WHERE uuid = ?";
-        PreparedStatement statement = getConnection().prepareStatement(sql);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid);
 
@@ -169,9 +185,15 @@ public class LifesDatabase {
                     results.getInt("weeklyQuestCompleted")
             );
 
+            statement.close();
+            connection.close();
+
             return playerStats;
 
         }
+
+        statement.close();
+        connection.close();
 
         return null;
 
@@ -179,7 +201,8 @@ public class LifesDatabase {
 
     private void addPlayerLanguage(String uuid, Language language) throws SQLException {
         String sql = "INSERT INTO player_language(uuid, lang_name) VALUES (?, ?)";
-        PreparedStatement statement = getConnection().prepareStatement(sql);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid);
         statement.setString(2, language.toString());
@@ -187,11 +210,13 @@ public class LifesDatabase {
         statement.executeUpdate();
 
         statement.close();
+        connection.close();
     }
 
     public void updatePlayerLanguage(String uuid, Language language) throws SQLException {
         String sql = "UPDATE player_language SET lang_name = ? WHERE uuid = ?";
-        PreparedStatement statement = getConnection().prepareStatement(sql);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, language.toString());
         statement.setString(2, uuid);
@@ -199,64 +224,84 @@ public class LifesDatabase {
         statement.executeUpdate();
 
         statement.close();
+        connection.close();
     }
 
     public Language getPlayerLanguage(String uuid) throws SQLException {
         String sql = "SELECT * FROM player_language WHERE uuid = ?";
-        PreparedStatement statement = getConnection().prepareStatement(sql);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid);
 
         ResultSet results = statement.executeQuery();
+        Language language = null;
         if(results.next()){
-            return Language.valueOf(results.getString("lang_name"));
+            language = Language.valueOf(results.getString("lang_name"));
         }
+        statement.close();
+        connection.close();
+
+        if(language != null) return language;
 
         addPlayerLanguage(uuid, Language.POLISH);
 
         results = statement.executeQuery();
         if(results.next()){
-            return Language.valueOf(results.getString("lang_name"));
+            language = Language.valueOf(results.getString("lang_name"));
         }
+        statement.close();
+        connection.close();
 
-        return null;
+        return language;
     }
 
 
     public int getPlayerLifes(String uuid) throws SQLException {
-        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM players_lifes WHERE uuid = ?");
+        Connection connection = getConnection();
+        PreparedStatement statement =connection.prepareStatement("SELECT * FROM players_lifes WHERE uuid = ?");
 
         statement.setString(1, uuid);
 
         ResultSet results = statement.executeQuery();
 
         if (results.next()) {
-            return results.getInt("lifes");
+            int lifes = results.getInt("lifes");
+            statement.close();
+            connection.close();
+            return lifes;
         }
 
         statement.close();
+        connection.close();
 
         return -404;
     }
 
     public boolean getIsPlayerRevived(String uuid) throws SQLException {
-        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM players_lifes WHERE uuid = ?");
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM players_lifes WHERE uuid = ?");
 
         statement.setString(1, uuid);
 
         ResultSet results = statement.executeQuery();
 
         if (results.next()) {
-            return results.getBoolean("isRevived");
+            boolean isRevived = results.getBoolean("isRevived");
+            statement.close();
+            connection.close();
+            return isRevived;
         }
 
         statement.close();
+        connection.close();
 
         return false;
     }
 
     public void updatePlayerLifes(String uuid, int lifes) throws SQLException {
-        PreparedStatement statement = getConnection().prepareStatement("UPDATE players_lifes SET lifes = ? WHERE uuid = ?");
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("UPDATE players_lifes SET lifes = ? WHERE uuid = ?");
 
         statement.setInt(1, lifes);
         statement.setString(2, uuid);
@@ -264,10 +309,12 @@ public class LifesDatabase {
         statement.executeUpdate();
 
         statement.close();
+        connection.close();
     }
 
     public void updatePlayerIsRevived(String uuid, boolean isRevived) throws SQLException {
-        PreparedStatement statement = getConnection().prepareStatement("UPDATE players_lifes SET isRevived = ? WHERE uuid = ?");
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement("UPDATE players_lifes SET isRevived = ? WHERE uuid = ?");
 
         statement.setBoolean(1, isRevived);
         statement.setString(2, uuid);
@@ -275,6 +322,7 @@ public class LifesDatabase {
         statement.executeUpdate();
 
         statement.close();
+        connection.close();
     }
 
 

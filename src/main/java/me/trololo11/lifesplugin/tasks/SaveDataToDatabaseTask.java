@@ -36,7 +36,7 @@ public class SaveDataToDatabaseTask extends BukkitRunnable {
 
         }
 
-        System.out.println("[LifesPluginS2] Successfully saved data!");
+        plugin.logger.info("[LifesPluginS2] Successfully saved data!");
 
     }
 }

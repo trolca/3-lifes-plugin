@@ -33,7 +33,6 @@ public class ChangePageTimeTask extends BukkitRunnable {
         startTime -= 1;
         if(startTime >= 0) updateText();
         if(startTime < 0 || (startTime == 0 && whatChange != 'm')){
-            System.out.println("sduiasduadsaus");
             try {
                 //waits a second bcs of they small incarrucy of the calculations
                 //(its hard to fix and like GLaDOS said 'the best solution to a problem is usually the easiest one')s

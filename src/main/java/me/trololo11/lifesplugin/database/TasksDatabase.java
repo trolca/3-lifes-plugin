@@ -1,5 +1,7 @@
 package me.trololo11.lifesplugin.database;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.utils.questTypes.QuestType;
 
@@ -9,9 +11,9 @@ import java.util.ArrayList;
 
 public class TasksDatabase {
 
-    private Connection weeklyConnection;
-    private Connection dailyConnection;
-    private Connection awardsConnection;
+    private HikariDataSource weeklySource;
+    private HikariDataSource dailySource;
+    private HikariDataSource awardsSource;
     private LifesPlugin plugin = LifesPlugin.getPlugin();
 
 
@@ -19,7 +21,7 @@ public class TasksDatabase {
     //if you really want to know then class LifesDatabase i invite you :>
 
     public Connection getWeeklyConnection() throws SQLException {
-        if (weeklyConnection != null) return weeklyConnection;
+        if (weeklySource != null) return weeklySource.getConnection();
 
         String host = plugin.getConfig().getString("host");
         String port = plugin.getConfig().getString("port");
@@ -30,30 +32,29 @@ public class TasksDatabase {
         if(databaseName == null || databaseName.isEmpty()){
             databaseName = "tasks_weekly";
         }
-        try {
-            Class.forName( "com.mysql.jdbc.Driver" );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
 
         Connection databaseCheck = DriverManager.getConnection(url, user,  password);
 
 
         Statement databaseStatement = databaseCheck.createStatement();
-        System.out.println("sususus");
         databaseStatement.execute("CREATE DATABASE IF NOT EXISTS "+databaseName);
         databaseStatement.close();
 
         databaseCheck.close();
 
-        weeklyConnection = DriverManager.getConnection(url + "/"+databaseName, user, password);
+        HikariConfig config = new HikariConfig();
 
-        return weeklyConnection;
+        config.setJdbcUrl(url + "/" + databaseName);
+        config.setUsername(user);
+        config.setPassword(password);
+        config.setDataSourceProperties(plugin.getGlobalDbProperties());
+        weeklySource = new HikariDataSource(config);
+
+        return weeklySource.getConnection();
     }
 
     public Connection getDailyConnection() throws SQLException {
-        if (dailyConnection != null) return dailyConnection;
+        if (dailySource != null) return dailySource.getConnection();
 
         String host = plugin.getConfig().getString("host");
         String port = plugin.getConfig().getString("port");
@@ -64,11 +65,7 @@ public class TasksDatabase {
         if(databaseName == null || databaseName.isBlank()){
             databaseName = "tasks_daily";
         }
-        try {
-            Class.forName( "com.mysql.jdbc.Driver" );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
 
         Connection databaseCheck = DriverManager.getConnection(url, user, password);
 
@@ -78,9 +75,15 @@ public class TasksDatabase {
 
         databaseCheck.close();
 
-        dailyConnection = DriverManager.getConnection(url + "/"+databaseName, user, password);
+        HikariConfig config = new HikariConfig();
 
-        return dailyConnection;
+        config.setJdbcUrl(url + "/" + databaseName);
+        config.setUsername(user);
+        config.setPassword(password);
+        config.setDataSourceProperties(plugin.getGlobalDbProperties());
+        dailySource = new HikariDataSource(config);
+
+        return dailySource.getConnection();
     }
 
     public void initializeDatabase() throws SQLException, ClassNotFoundException {
@@ -90,7 +93,7 @@ public class TasksDatabase {
     }
 
     public Connection getAwardsDataConnection() throws SQLException {
-        if (awardsConnection != null) return awardsConnection;
+        if (awardsSource != null) return awardsSource.getConnection();
 
         String host = plugin.getConfig().getString("host");
         String port = plugin.getConfig().getString("port");
@@ -102,11 +105,6 @@ public class TasksDatabase {
             databaseName = "tasks_awards_data";
         }
 
-        try {
-            Class.forName( "com.mysql.jdbc.Driver" );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
 
         Connection databaseCheck = DriverManager.getConnection(url, user, password);
 
@@ -116,42 +114,70 @@ public class TasksDatabase {
 
         databaseCheck.close();
 
-        awardsConnection = DriverManager.getConnection(url + "/"+databaseName, user, password);
+        HikariConfig config = new HikariConfig();
 
-        Statement createTableStatement = awardsConnection.createStatement();
+        config.setJdbcUrl(url + "/" + databaseName);
+        config.setUsername(user);
+        config.setPassword(password);
+        config.setDataSourceProperties(plugin.getGlobalDbProperties());
+        awardsSource = new HikariDataSource(config);
+
+        Connection connection = awardsSource.getConnection();
+        Statement createTableStatement = connection.createStatement();
         createTableStatement.execute("CREATE TABLE IF NOT EXISTS awards_data(uuid varchar(36) primary key, hasTakenDaily boolean, hasTakenWeekly boolean)");
         createTableStatement.close();
+        connection.close();
 
-        return awardsConnection;
+        return awardsSource.getConnection();
     }
 
 
 
     //creates a new table for a task to store the players progress for this task because if we had only 1 table it would be hard to change number of tasks
     public void createTaskTable(String name, String taskType) throws SQLException {
-        Statement statement = taskType.equalsIgnoreCase("daily") ? getDailyConnection().createStatement() : getWeeklyConnection().createStatement();
+        Connection connection = taskType.equalsIgnoreCase("daily") ? getDailyConnection() : getWeeklyConnection();
+
+        Statement statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS " + name + "(uuid varchar(36) primary key, progress int)");
         statement.close();
+        connection.close();
     }
 
     //we can remove the table if the task is no longer used
     public void removeTaskTable(String name, String taskType) throws SQLException {
-        Statement statement = taskType.equalsIgnoreCase("daily") ? getDailyConnection().createStatement() : getWeeklyConnection().createStatement();
+        Connection connection = taskType.equalsIgnoreCase("daily") ? getDailyConnection() : getWeeklyConnection();
+
+        Statement statement = connection.createStatement();
         statement.execute("DROP TABLE " + name);
         statement.close();
+        connection.close();
+    }
+
+    /**
+     * Closes all of the DataSources in the database
+     */
+    public void closeDatabase(){
+        awardsSource.close();
+        dailySource.close();
+        weeklySource.close();
     }
 
 
 
+
     public int getTasksProgress(String uuid, String taskName, QuestType questType) throws SQLException {
-        PreparedStatement statement = questType == QuestType.DAILY ? getDailyConnection().prepareStatement("SELECT * FROM " + taskName + " WHERE uuid = ?") : getWeeklyConnection().prepareStatement("SELECT * FROM " + taskName + " WHERE uuid = ?");
+        Connection connection = questType == QuestType.DAILY ? getDailyConnection() : getWeeklyConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + taskName + " WHERE uuid = ?");
 
         statement.setString(1, uuid);
 
         ResultSet results = statement.executeQuery();
 
         if (results.next()) {
-            return results.getInt("progress");
+            int progress = results.getInt("progress");
+            statement.close();
+            connection.close();
+            return progress;
         }
         //TODO Check if this causes the problem with task progress :>
         String sql = "INSERT INTO " + taskName + "(uuid, progress) VALUES (?, ?)";
@@ -163,39 +189,43 @@ public class TasksDatabase {
         createStatement.executeUpdate();
         statement.close();
         createStatement.close();
-
+        connection.close();
 
         return 0;
     }
 
     public void setTaskProgress(String uuid, int newProgress, String taskName, QuestType questType) throws SQLException {
         String sql = "UPDATE " + taskName + " SET progress = ? WHERE uuid = ?";
-        PreparedStatement statement = questType == QuestType.DAILY ? getDailyConnection().prepareStatement(sql) : getWeeklyConnection().prepareStatement(sql);
+        Connection connection = questType == QuestType.DAILY ? getDailyConnection() : getWeeklyConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setInt(1, newProgress);
         statement.setString(2, uuid);
 
         statement.executeUpdate();
         statement.close();
+        connection.close();
 
     }
 
     private void setupPlayerAwards(String uuid) throws SQLException {
         String sql = "INSERT INTO awards_data(uuid, hasTakenDaily, hasTakenWeekly) VALUES (?, ?, ?)";
-        PreparedStatement statement = getAwardsDataConnection().prepareStatement(sql);
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid);
         statement.setBoolean(2, false);
         statement.setBoolean(3, false);
         statement.executeUpdate();
         statement.close();
+        connection.close();
     }
 
     public void setTakenAwards(String uuid, boolean hasTakenDaily, boolean hasTakenWeekly) throws SQLException {
 
         String sql = "UPDATE awards_data SET hasTakenDaily = ?, hasTakenWeekly = ? WHERE uuid = ?";
-
-        PreparedStatement statement = getAwardsDataConnection().prepareStatement(sql);
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setBoolean(1, hasTakenDaily);
         statement.setBoolean(2, hasTakenWeekly);
@@ -203,33 +233,37 @@ public class TasksDatabase {
 
         statement.executeUpdate();
         statement.close();
+        connection.close();
 
     }
 
     public void removeAllTakenDailyAwards() throws SQLException {
         String sql = "UPDATE awards_data SET hasTakenDaily = false";
-
-        PreparedStatement statement = getAwardsDataConnection().prepareStatement(sql);
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.executeUpdate();
         statement.close();
+        connection.close();
 
     }
 
     public void removeAllTakenWeeklyAwards() throws SQLException {
         String sql = "UPDATE awards_data SET hasTakenWeekly = false";
-
-        PreparedStatement statement = getAwardsDataConnection().prepareStatement(sql);
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.executeUpdate();
         statement.close();
+        connection.close();
 
     }
 
     public ArrayList<Boolean> getTakenAwards(String uuid) throws SQLException {
 
         String sql = "SELECT * FROM awards_data WHERE uuid = ?";
-        PreparedStatement statement = getAwardsDataConnection().prepareStatement(sql);
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid);
 
@@ -241,6 +275,7 @@ public class TasksDatabase {
             takenAwards.add(results.getBoolean("hasTakenDaily"));
             takenAwards.add(results.getBoolean("hasTakenWeekly"));
             statement.close();
+            connection.close();
             return takenAwards;
         }
 
@@ -254,11 +289,13 @@ public class TasksDatabase {
             takenAwards.add(results.getBoolean("hasTakenDaily"));
             takenAwards.add(results.getBoolean("hasTakenWeekly"));
             statement.close();
+            connection.close();
             return takenAwards;
         }
 
 
         statement.close();
+        connection.close();
 
         return null;
 

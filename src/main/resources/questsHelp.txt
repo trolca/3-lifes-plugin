@@ -48,3 +48,4 @@ VILLAGER_TRADE_SPEND - To progress player has to spend a specified item while tr
 ON_FIRE - To progress player has to be on fire (There shouldn't be a target :>)
 VILLAGER_TRADE_BUY - To progress player has to buy a specific item from a villager (Target should be Material)
 GET_ITEM_BY_MOB - To progress a mob that player kills has to drop the specified item (Target should be Material)
+PLAYER_DAMAGE - To progress player has to damaged by a specific causeBRE

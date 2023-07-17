@@ -38,7 +38,6 @@ public class LifesDatabase {
         databaseStatement.execute("CREATE DATABASE IF NOT EXISTS "+databaseName);
         databaseStatement.close();
 
-        databaseCheck.close();
         HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl(url + "/" + databaseName);
@@ -47,7 +46,7 @@ public class LifesDatabase {
         config.setDataSourceProperties(plugin.getGlobalDbProperties());
         ds = new HikariDataSource(config);
 
-
+        databaseCheck.close();
 
 
         return ds.getConnection();

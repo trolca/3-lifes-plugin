@@ -40,7 +40,6 @@ public class TasksDatabase {
         databaseStatement.execute("CREATE DATABASE IF NOT EXISTS "+databaseName);
         databaseStatement.close();
 
-        databaseCheck.close();
 
         HikariConfig config = new HikariConfig();
 
@@ -49,6 +48,8 @@ public class TasksDatabase {
         config.setPassword(password);
         config.setDataSourceProperties(plugin.getGlobalDbProperties());
         weeklySource = new HikariDataSource(config);
+
+        databaseCheck.close();
 
         return weeklySource.getConnection();
     }
@@ -73,8 +74,6 @@ public class TasksDatabase {
         databaseStatement.execute("CREATE DATABASE IF NOT EXISTS "+databaseName);
         databaseStatement.close();
 
-        databaseCheck.close();
-
         HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl(url + "/" + databaseName);
@@ -82,6 +81,8 @@ public class TasksDatabase {
         config.setPassword(password);
         config.setDataSourceProperties(plugin.getGlobalDbProperties());
         dailySource = new HikariDataSource(config);
+
+        databaseCheck.close();
 
         return dailySource.getConnection();
     }
@@ -182,7 +183,7 @@ public class TasksDatabase {
         //TODO Check if this causes the problem with task progress :>
         String sql = "INSERT INTO " + taskName + "(uuid, progress) VALUES (?, ?)";
 
-        PreparedStatement createStatement = questType == QuestType.DAILY ? getDailyConnection().prepareStatement(sql) : getWeeklyConnection().prepareStatement(sql);
+        PreparedStatement createStatement = connection.prepareStatement(sql);
         createStatement.setString(1, uuid);
         createStatement.setInt(2, 0);
 

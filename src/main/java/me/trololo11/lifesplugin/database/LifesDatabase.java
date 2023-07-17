@@ -239,10 +239,13 @@ public class LifesDatabase {
         if(results.next()){
             language = Language.valueOf(results.getString("lang_name"));
         }
-        statement.close();
-        connection.close();
 
-        if(language != null) return language;
+        if(language != null){
+            statement.close();
+            connection.close();
+
+            return language;
+        }
 
         addPlayerLanguage(uuid, Language.POLISH);
 

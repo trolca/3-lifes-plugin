@@ -9,10 +9,10 @@ commands:
     description: Opens the main lifes menu
   takelife:
     description: Use this to take a life from yourself and get it as an item!
-  getitems:
-    description: Ohhh yeahh
   setlifes:
     description: This command sets lifes for a specific player
+  startlifes:
+    description: You start the server :o
 permissions:
   lifesplugins2.admin:
     description: An admin permission for the more sussy commands :>

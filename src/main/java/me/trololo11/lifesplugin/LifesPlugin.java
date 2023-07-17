@@ -1,9 +1,6 @@
 package me.trololo11.lifesplugin;
 
-import me.trololo11.lifesplugin.commands.GetItemsCommand;
-import me.trololo11.lifesplugin.commands.MainMenuCommand;
-import me.trololo11.lifesplugin.commands.SetLifesCommand;
-import me.trololo11.lifesplugin.commands.TakeLifeCommand;
+import me.trololo11.lifesplugin.commands.*;
 import me.trololo11.lifesplugin.database.LanguageManager;
 import me.trololo11.lifesplugin.database.LifesDatabase;
 import me.trololo11.lifesplugin.database.QuestsTimings;
@@ -168,8 +165,8 @@ public final class LifesPlugin extends JavaPlugin {
 
         getCommand("lifesmenu").setExecutor(new MainMenuCommand());
         getCommand("takelife").setExecutor(new TakeLifeCommand(recipesManager));
-        getCommand("getitems").setExecutor(new GetItemsCommand(recipesManager));
         getCommand("setlifes").setExecutor(new SetLifesCommand());
+        getCommand("startlifes").setExecutor(new StartServerCommand());
 
         getCommand("setlifes").setTabCompleter(new SetLifesTabCompleter());
         getCommand("lifesmenu").setTabCompleter(new MenuCommandTabCompleter());

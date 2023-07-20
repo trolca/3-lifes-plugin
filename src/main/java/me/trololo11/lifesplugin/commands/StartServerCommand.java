@@ -27,7 +27,7 @@ public class StartServerCommand implements CommandExecutor {
         Bukkit.getWorld("world_nether").setPVP(false);
         Bukkit.getWorld("world_the_end").setPVP(false);
 
-        new PvpTurnOnTask(180).runTaskTimer(plugin, 20L, 20L);
+        new PvpTurnOnTask(1800).runTaskTimer(plugin, 20L, 20L);
 
         for(Player player : Bukkit.getOnlinePlayers()){
             Language language = plugin.getPlayerLanguage(player);

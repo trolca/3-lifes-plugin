@@ -236,8 +236,6 @@ public class MainLifesMenu extends Menu {
         heartPiece.setItemMeta(heartMeta);
         revivePiece.setItemMeta(reviveMeta);
         darkFiller.setItemMeta(darkFillerMeta);
-        notProgress.setItemMeta(notProgressMeta);
-        progress.setItemMeta(progressMeta);
         dailyTasks.setItemMeta(dailyTasksMeta);
         weeklyTasks.setItemMeta(weeklyTasksMeta);
         playerHead.setItemMeta(playerHeadMeta);
@@ -253,6 +251,13 @@ public class MainLifesMenu extends Menu {
         //the varaible shows how many slots will be filled in the menu
         int fillDailySlots = (int) Math.floor((dailyPercentageProgress*8)/100.0);
         int fillWeeklySlots = (int) Math.floor((weeklyPercentageProgress*8)/100.0);
+
+        progressMeta.setDisplayName(String.valueOf(ChatColor.GREEN) + ( (int) dailyPercentageProgress ) + "%");
+        notProgressMeta.setDisplayName(String.valueOf(ChatColor.GRAY) + ( (int) dailyPercentageProgress ) + "%");
+
+        notProgress.setItemMeta(notProgressMeta);
+        progress.setItemMeta(progressMeta);
+
         //making of the daily quests progress bar (its on top btw)
 
         for(int i = 1; i <= fillDailySlots; i++){
@@ -261,6 +266,12 @@ public class MainLifesMenu extends Menu {
         for(int i = fillDailySlots+1; i < 9; i++){
             inventory.setItem(i, notProgress);
         }
+
+        progressMeta.setDisplayName(String.valueOf(ChatColor.GREEN) + ( (int) weeklyPercentageProgress ) + "%");
+        notProgressMeta.setDisplayName(String.valueOf(ChatColor.GRAY) + ( (int) weeklyPercentageProgress ) + "%");
+
+        notProgress.setItemMeta(notProgressMeta);
+        progress.setItemMeta(progressMeta);
 
         for(int i = 10; i <= fillWeeklySlots+9; i++){
             inventory.setItem(i, progress);

@@ -4,6 +4,7 @@ import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.RecipesManager;
 import me.trololo11.lifesplugin.database.LanguageManager;
 import me.trololo11.lifesplugin.events.LifesChangeEvent;
+import me.trololo11.lifesplugin.utils.PluginUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
@@ -33,6 +34,10 @@ public class TakeLifeCommand implements CommandExecutor {
 
             if(lifes <= 1){
                 p.sendMessage(ChatColor.RED + LanguageManager.getLangLine("takelife-command-error", plugin.getPlayerLanguage(p)));
+                return true;
+            }
+            if(!PluginUtils.isInventoryEmpty(p.getInventory())){
+                p.sendMessage(ChatColor.RED + LanguageManager.getLangLine("takelife-full-inv-error", plugin.getPlayerLanguage(p)));
                 return true;
             }
 

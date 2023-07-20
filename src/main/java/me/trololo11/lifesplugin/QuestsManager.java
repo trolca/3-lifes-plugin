@@ -4,18 +4,18 @@ import me.trololo11.lifesplugin.database.LanguageManager;
 import me.trololo11.lifesplugin.database.QuestsTimings;
 import me.trololo11.lifesplugin.database.TasksDatabase;
 import me.trololo11.lifesplugin.tasks.ChangePageTimeTask;
+import me.trololo11.lifesplugin.utils.PluginUtils;
 import me.trololo11.lifesplugin.utils.questTypes.TaskListenerType;
 import me.trololo11.lifesplugin.utils.questTypes.QuestType;
 import me.trololo11.lifesplugin.utils.questUtils.QuestClass;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -34,11 +34,13 @@ public class QuestsManager {
 
     private LifesPlugin plugin = LifesPlugin.getPlugin();
     private QuestsTimings questsTimings;
+    private RecipesManager recipesManager;
     private TasksDatabase tasksDatabase = plugin.getTasksDatabase();
     private HashMap<Player, Integer> playerCompletedDailyQuests = new HashMap<>();
     private HashMap<Player, Integer> playerCompletedWeeklyQuests = new HashMap<>();
     private HashMap<Player, Boolean> hasTakenDaily = new HashMap<>();
     private HashMap<Player, Boolean> hasTakenWeekly = new HashMap<>();
+    private HashMap<Player, Byte> takenAwardsWeekly = new HashMap<>();
     private boolean isDailyTaskRunning=false,isWeeklyTaskRunning=false;
     private Logger logger;
 
@@ -67,8 +69,9 @@ public class QuestsManager {
 
      */
 
-    public QuestsManager(QuestsTimings questsTimings){
+    public QuestsManager(QuestsTimings questsTimings, RecipesManager recipesManager){
         this.questsTimings = questsTimings;
+        this.recipesManager = recipesManager;
         logger = plugin.logger;
     }
 
@@ -258,6 +261,7 @@ public class QuestsManager {
 
 
         }
+        plugin.restartListenerArrays();
         checkDate(newDate, newTime, questType);
     }
 
@@ -443,6 +447,10 @@ public class QuestsManager {
         return allActiveQuests;
     }
 
+    public byte getTakenAwards(Player player){
+        return takenAwardsWeekly.get(player);
+    }
+
     public int getPlayerCompletedDailyQuests(Player player) {
         return playerCompletedDailyQuests.getOrDefault(player, 0);
     }
@@ -465,8 +473,32 @@ public class QuestsManager {
         //if the player doesnt have the counter (for some reason) it makes a new one
         if(playerCompletedWeeklyQuests.get(player) == null) calculatePlayersFinishedQuests(player);
         //adds 1 to the complteded weekly quests
-        int currProgress = playerCompletedWeeklyQuests.getOrDefault(player, 0);
-        playerCompletedWeeklyQuests.put(player, currProgress+1);
+        int currProgress = playerCompletedWeeklyQuests.getOrDefault(player, 0)+1;
+        int takenWeeklyAwards = takenAwardsWeekly.get(player);
+
+        playerCompletedWeeklyQuests.put(player, currProgress);
+        if(currProgress/3 > takenWeeklyAwards){
+            int howMuch = (currProgress/3)-takenWeeklyAwards;
+
+            takenAwardsWeekly.put(player, (byte) (takenWeeklyAwards+howMuch));
+
+            ItemStack reviveShard = recipesManager.getReviveShardItem().clone();
+            reviveShard.setAmount(howMuch);
+
+            if(PluginUtils.isInventoryEmpty(player.getInventory())){
+                player.getInventory().addItem(reviveShard);
+            }else{
+                World world = player.getWorld();
+                world.dropItemNaturally(player.getLocation(), reviveShard);
+
+            }
+
+            player.sendMessage(ChatColor.GOLD + LanguageManager.getLangLine("revive-shard-get", plugin.getPlayerLanguage(player)));
+            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
+
+            tasksDatabase.setWeeklyAwards(player.getUniqueId().toString(),(byte) (takenWeeklyAwards+howMuch));
+        }
+
     }
 
 
@@ -489,6 +521,7 @@ public class QuestsManager {
     public void setPlayerHasTakenWeekly(Player player, boolean hasTaken){
         try {
             tasksDatabase.setTakenAwards(player.getUniqueId().toString(), hasTakenDaily.getOrDefault(player, false), hasTaken);
+            if(hasTaken) tasksDatabase.setWeeklyAwards(player.getUniqueId().toString(), (byte) (takenAwardsWeekly.get(player)+1));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -499,6 +532,8 @@ public class QuestsManager {
         ArrayList<Boolean> takenAwards = tasksDatabase.getTakenAwards(player.getUniqueId().toString());
         hasTakenDaily.put(player, takenAwards.get(0));
         hasTakenWeekly.put(player, takenAwards.get(1));
+
+        takenAwardsWeekly.put(player, tasksDatabase.getWeeklyGottenAwards(player.getUniqueId().toString()));
     }
 
     public boolean getHasTakenDaily(Player player){

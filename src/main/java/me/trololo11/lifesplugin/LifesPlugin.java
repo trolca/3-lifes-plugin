@@ -73,8 +73,8 @@ public final class LifesPlugin extends JavaPlugin {
         lifesDatabase = new LifesDatabase();
         tasksDatabase = new TasksDatabase();
         questsTimings = new QuestsTimings();
-        questsManager = new QuestsManager(questsTimings);
         recipesManager = new RecipesManager();
+        questsManager = new QuestsManager(questsTimings, recipesManager);
         new Menus(questsManager, recipesManager);
         new LanguageManager();
 
@@ -166,7 +166,7 @@ public final class LifesPlugin extends JavaPlugin {
         getCommand("lifesmenu").setExecutor(new MainMenuCommand());
         getCommand("takelife").setExecutor(new TakeLifeCommand(recipesManager));
         getCommand("setlifes").setExecutor(new SetLifesCommand());
-        getCommand("startlifes").setExecutor(new StartServerCommand());
+        getCommand("startlifes").setExecutor(new StartServerCommand() );
 
         getCommand("setlifes").setTabCompleter(new SetLifesTabCompleter());
         getCommand("lifesmenu").setTabCompleter(new MenuCommandTabCompleter());
@@ -322,6 +322,7 @@ public final class LifesPlugin extends JavaPlugin {
                 questsManager.setupTakenAwardsForPlayer(p);
 
 
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -341,6 +342,10 @@ public final class LifesPlugin extends JavaPlugin {
 
 
         }
+    }
+
+    public void restartListenerArrays(){
+        listenerArrays = new TaskListenerArrays(questsManager.getAllQuests());
     }
 
     //setters and getters for data storages :p

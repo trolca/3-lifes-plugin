@@ -46,10 +46,7 @@ public class VillagerBuyTradeListener extends QuestListener {
         }else{
             int maxUsages = merchantRecipe.getMaxUses();
             int thisUses = itemBuy.getAmount()/itemCost.getAmount();
-            System.out.println("cost: "+ itemCost.getAmount());
-            System.out.println("buy: "+ itemBuy.getAmount());
-            System.out.println("max: "+maxUsages);
-            System.out.println("this: "+ thisUses);
+
             if(thisUses > maxUsages){
                 checkTarget(itemTrade.getType(), player, maxUsages*itemTrade.getAmount());
             }else{

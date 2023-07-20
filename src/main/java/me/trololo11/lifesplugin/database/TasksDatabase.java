@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.utils.questTypes.QuestType;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.naming.CommunicationException;
 import java.sql.*;
@@ -125,7 +126,7 @@ public class TasksDatabase {
 
         Connection connection = awardsSource.getConnection();
         Statement createTableStatement = connection.createStatement();
-        createTableStatement.execute("CREATE TABLE IF NOT EXISTS awards_data(uuid varchar(36) primary key, hasTakenDaily boolean, hasTakenWeekly boolean)");
+        createTableStatement.execute("CREATE TABLE IF NOT EXISTS awards_data(uuid varchar(36) primary key, hasTakenDaily boolean, hasTakenWeekly boolean, takenWeekly tinyint)");
         createTableStatement.close();
         connection.close();
 
@@ -210,13 +211,14 @@ public class TasksDatabase {
     }
 
     private void setupPlayerAwards(String uuid) throws SQLException {
-        String sql = "INSERT INTO awards_data(uuid, hasTakenDaily, hasTakenWeekly) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO awards_data(uuid, hasTakenDaily, hasTakenWeekly, takenWeekly) VALUES (?, ?, ?, ?)";
         Connection connection = getAwardsDataConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, uuid);
         statement.setBoolean(2, false);
         statement.setBoolean(3, false);
+        statement.setByte(4, (byte) 0);
         statement.executeUpdate();
         statement.close();
         connection.close();
@@ -250,7 +252,7 @@ public class TasksDatabase {
     }
 
     public void removeAllTakenWeeklyAwards() throws SQLException {
-        String sql = "UPDATE awards_data SET hasTakenWeekly = false";
+        String sql = "UPDATE awards_data SET hasTakenWeekly = false, takenWeekly = 0";
         Connection connection = getAwardsDataConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -258,6 +260,54 @@ public class TasksDatabase {
         statement.close();
         connection.close();
 
+    }
+
+    public void setWeeklyAwards(String uuid, byte awards) throws SQLException {
+        String sql = "UPDATE awards_data SET takenWeekly = ? WHERE uuid = ?";
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setByte(1, awards);
+        statement.setString(2, uuid);
+
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
+    }
+
+    public byte getWeeklyGottenAwards(String uuid) throws SQLException {
+        String sql = "SELECT * FROM awards_data WHERE uuid = ?";
+        Connection connection = getAwardsDataConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, uuid);
+
+        ResultSet results = statement.executeQuery();
+
+        if(results.next()){
+            byte gottenRewards = results.getByte("takenWeekly");
+
+            statement.close();
+            connection.close();
+
+            return gottenRewards;
+        }
+
+        setupPlayerAwards(uuid);
+
+        results = statement.executeQuery();
+
+
+        if(results.next()) {
+            byte gottenRewards = results.getByte("takenWeekly");
+
+            statement.close();
+            connection.close();
+
+            return gottenRewards;
+        }
+
+        return -1;
     }
 
     public ArrayList<Boolean> getTakenAwards(String uuid) throws SQLException {

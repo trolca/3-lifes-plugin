@@ -97,7 +97,7 @@ public class MoveListeners extends QuestListener {
         for (QuestClass quest : questsList) {
 
 
-            if (!quest.hasCompleted(p) && target == quest.getQuestTarget() && !plugin.getDeadPlayers().contains(p)) {
+            if (!quest.hasCompleted(p) && (target == quest.getQuestTarget() || (quest.getQuestTarget() == EntityType.BOAT && target == EntityType.CHEST_BOAT) ) && !plugin.getDeadPlayers().contains(p)) {
 
                 quest.setProgress(p, quest.getProgress(p) + distance);
 

@@ -411,6 +411,10 @@ public class QuestsManager {
                 return EntityDamageEvent.DamageCause.valueOf(targetType);
             }
 
+            case RENAME_MOB -> {
+                return targetType;
+            }
+
             default -> {
                 return null;
             }

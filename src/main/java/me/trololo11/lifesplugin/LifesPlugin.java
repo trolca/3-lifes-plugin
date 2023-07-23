@@ -212,6 +212,7 @@ public final class LifesPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerOnFireListener(), this);
         getServer().getPluginManager().registerEvents(new VillagerBuyTradeListener(), this);
         getServer().getPluginManager().registerEvents(new MobDropsListener(), this);
+        getServer().getPluginManager().registerEvents(new RenameMobListener(), this);
 
     }
 

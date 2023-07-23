@@ -3,6 +3,7 @@ package me.trololo11.lifesplugin.listeners.questListeners;
 import me.trololo11.lifesplugin.LifesPlugin;
 import me.trololo11.lifesplugin.utils.QuestListener;
 import me.trololo11.lifesplugin.utils.questUtils.QuestClass;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Player;
@@ -32,6 +33,14 @@ public class InteractAtEntityListener extends QuestListener {
         Player player = e.getPlayer();
 
         checkTarget(null, player, plugin.getListenerArrays().getSnowFoxClickQuests());
+    }
+
+    @EventHandler
+    public void onCreeperLighterInteract(PlayerInteractEntityEvent e) throws SQLException {
+        if(e.getRightClicked().getType() != EntityType.CREEPER) return;
+        if(e.getPlayer().getInventory().getItemInMainHand().getType() != Material.FLINT_AND_STEEL) return;
+
+        checkTarget(null, e.getPlayer(), plugin.getListenerArrays().getLighterCreeperQuests());
     }
 
     @Override

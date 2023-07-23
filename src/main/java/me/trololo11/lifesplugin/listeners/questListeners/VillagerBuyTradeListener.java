@@ -37,7 +37,6 @@ public class VillagerBuyTradeListener extends QuestListener {
         if(itemCost == null) return;
         if(itemBuy == null) return;
         if(itemTrade == null) return;
-        System.out.println(e.getSlot());
 
         if(e.getClick() != ClickType.SHIFT_LEFT && e.getClick() != ClickType.SHIFT_RIGHT){
 

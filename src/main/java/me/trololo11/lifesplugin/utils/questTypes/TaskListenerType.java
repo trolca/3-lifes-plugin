@@ -34,6 +34,8 @@ public enum TaskListenerType {
     ON_FIRE,
     VILLAGER_TRADE_BUY,
     GET_ITEM_BY_MOB,
-    PLAYER_DAMAGE
+    PLAYER_DAMAGE,
+    RENAME_MOB,
+    CREEPER_LIGHTER
 
 }

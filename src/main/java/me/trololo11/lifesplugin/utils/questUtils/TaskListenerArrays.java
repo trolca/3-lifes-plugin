@@ -38,6 +38,8 @@ public class TaskListenerArrays {
     private final ArrayList<QuestClass> villagerBuyQuests;
     private final ArrayList<QuestClass> itemFromMobQuests;
     private final ArrayList<QuestClass> playerDamageQuests;
+    private final ArrayList<QuestClass> renameMobQuests;
+    private final ArrayList<QuestClass> lighterCreeperQuests;
 
 
     public TaskListenerArrays(ArrayList<QuestClass> allQuests) {
@@ -75,6 +77,8 @@ public class TaskListenerArrays {
         villagerBuyQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.VILLAGER_TRADE_BUY).toList());
         itemFromMobQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.GET_ITEM_BY_MOB).toList());
         playerDamageQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.PLAYER_DAMAGE).toList());
+        renameMobQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.RENAME_MOB).toList());
+        lighterCreeperQuests = new ArrayList<>(allQuests.stream().filter(s -> s.getListenerType() == TaskListenerType.CREEPER_LIGHTER).toList());
 
     }
 
@@ -205,6 +209,13 @@ public class TaskListenerArrays {
         return playerDamageQuests;
     }
 
+    public ArrayList<QuestClass> getRenameMobQuests() {
+        return renameMobQuests;
+    }
+
+    public ArrayList<QuestClass> getLighterCreeperQuests() {
+        return lighterCreeperQuests;
+    }
 
 
 }

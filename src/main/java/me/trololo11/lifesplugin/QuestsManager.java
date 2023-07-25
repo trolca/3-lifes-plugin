@@ -481,8 +481,8 @@ public class QuestsManager {
         int takenWeeklyAwards = takenAwardsWeekly.get(player);
 
         playerCompletedWeeklyQuests.put(player, currProgress);
-        if(currProgress/3 > takenWeeklyAwards){
-            int howMuch = (currProgress/3)-takenWeeklyAwards;
+        if(currProgress > takenWeeklyAwards){
+            int howMuch = currProgress-takenWeeklyAwards;
 
             takenAwardsWeekly.put(player, (byte) (takenWeeklyAwards+howMuch));
 

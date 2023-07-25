@@ -13,6 +13,8 @@ commands:
     description: This command sets lifes for a specific player
   startlifes:
     description: You start the server :o
+  setprogress:
+    description: Set progress for a player
 permissions:
   lifesplugins2.admin:
     description: An admin permission for the more sussy commands :>

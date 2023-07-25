@@ -96,8 +96,8 @@ public class LifesDatabase {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement("SELECT * FROM players_lifes WHERE lifes = 0");
 
-        ResultSet results = statement.executeQuery();
 
+        ResultSet results = statement.executeQuery();
 
         while (results.next()) {
             deadPlayers.add(Bukkit.getOfflinePlayer(UUID.fromString(results.getString("uuid"))));

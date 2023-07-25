@@ -10,6 +10,7 @@ import me.trololo11.lifesplugin.listeners.lifeslisteners.*;
 import me.trololo11.lifesplugin.listeners.questListeners.*;
 import me.trololo11.lifesplugin.tabcompleters.MenuCommandTabCompleter;
 import me.trololo11.lifesplugin.tabcompleters.SetLifesTabCompleter;
+import me.trololo11.lifesplugin.tabcompleters.SetProgressCompleter;
 import me.trololo11.lifesplugin.tasks.SaveDataToDatabaseTask;
 import me.trololo11.lifesplugin.utils.Menu;
 import me.trololo11.lifesplugin.utils.Menus;
@@ -108,12 +109,15 @@ public final class LifesPlugin extends JavaPlugin {
             }
         }
 
-        setupData();
+
         try {
             setDirs();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        setupData();
+
         File file = new File(this.getDataFolder() + "/quests-data/all-daily");
         if(file.listFiles().length < dailyQuestNum) dailyQuestNum = file.listFiles().length;
         file = new File(this.getDataFolder() + "/quests-data/all-weekly");
@@ -167,9 +171,11 @@ public final class LifesPlugin extends JavaPlugin {
         getCommand("takelife").setExecutor(new TakeLifeCommand(recipesManager));
         getCommand("setlifes").setExecutor(new SetLifesCommand());
         getCommand("startlifes").setExecutor(new StartServerCommand() );
+        getCommand("setprogress").setExecutor(new SetQuestProgressCommand(questsManager));
 
         getCommand("setlifes").setTabCompleter(new SetLifesTabCompleter());
         getCommand("lifesmenu").setTabCompleter(new MenuCommandTabCompleter());
+        getCommand("setprogress").setTabCompleter(new SetProgressCompleter());
 
 
 
@@ -294,11 +300,12 @@ public final class LifesPlugin extends JavaPlugin {
 
     //for more information DatabaseManager class
     private void setupData() {
+        try {
         for (Player p : Bukkit.getOnlinePlayers()) {
 
             //it basically setups all the online players data
 
-            try {
+
                 int lifes = lifesDatabase.getPlayerLifes(p.getUniqueId().toString());
                 if (lifes == -404) {
                     lifesDatabase.addPlayerToDatabase(p.getUniqueId().toString(), 3, false);
@@ -319,16 +326,18 @@ public final class LifesPlugin extends JavaPlugin {
 
                 setPlayerLanguage(p, lifesDatabase.getPlayerLanguage(p.getUniqueId().toString()));
 
-                deadPlayers = lifesDatabase.getAllDeadPlayers();
                 questsManager.setupTakenAwardsForPlayer(p);
 
 
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
 
+        }
+
+        deadPlayers = lifesDatabase.getAllDeadPlayers();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
